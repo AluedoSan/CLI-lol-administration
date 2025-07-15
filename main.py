@@ -1,4 +1,5 @@
-from db import init_db, update_info, get_champ, create_champ, show_estastic, delete_champ
+from db import init_db, update_info, get_champ, create_champ, show_estastic, delete_champ, get_all_champ
+import pandas as pd
 
 d = "\033[m"
 lane_list = ["top", "jg", "mid", "adc", "sup"]
@@ -7,7 +8,7 @@ lane_list = ["top", "jg", "mid", "adc", "sup"]
 def main():
     init_db()
     print(f"\033[0;30;41mBanco de dados inicializado.{d}")
-    print(f"\033[1;32;43m⭐ Bem-Vindo a Summoner's Rift ⭐ {d}")
+    print(f"\033[1;33;45m⭐ Bem-Vindo a Summoner's Rift ⭐ {d}")
     options_menu()
 #!SECTION
 
@@ -19,20 +20,23 @@ Escolha uma das opções:
 [0] - Ver estatísticas
 [1] - Seleção de campeão
 [2] - Deletar campeão
-[3] - Sair{d} """)
+[3] - Ver ranking
+[4] - Sair{d} """)
 
         option = input("\nOpção: ")
-
-        if option == "0":
-            show_estastic()
-        elif option == "1":
-            champ_select()
-        elif option == "2":
-            champ_delete()
-        elif option == "3":
-            break
-        else:
-            print("\nOpção não encontrada!")
+        match option:
+            case "0":
+                show_estastic()
+            case "1":
+                champ_select()
+            case "2":
+                champ_delete()
+            case "3":
+                champ_ranking()
+            case "4":
+                break
+            case _:
+                print("\nOpção não encontrada!")
 #!SECTION
 
 #SECTION - Seleção para selecionar um campeão/adiciona-lo
@@ -46,7 +50,11 @@ def champ_select():
         win = input("\nSim [1] | Não [0] ")
         win = True if win == "1" else False
         update_info(choice, win)
+        print(f"\n\033[1;32;40mStatus atualizado!{d}")
     else:
+        if choice == "":
+            print("\nNão pode estar em branco!")
+            return
         confirm = input("\nCampeão não encontrado, quer adicioná-lo? Sim [1] | Não [0] ")
         confirm = True if confirm == "1" else False
     
@@ -59,19 +67,20 @@ Qual a lane? Escolha uma das opções!
 [3] - adc
 [4] - sup{d}""")
             option = input("Opção: ")
-            if option == "0":
-                lane = lane_list[0]
-            elif option == "1":
-                lane = lane_list[1]
-            elif option == "2":
-                lane = lane_list[2]
-            elif option == "3":
-                lane = lane_list[3]
-            elif option == "4":
-                lane = lane_list[4]
-            else:
-                print(f"\n\033[0;31;40mOpção inválida!{d}")
-                return
+            match option:
+                case "0":
+                    lane = lane_list[0]
+                case "1":
+                    lane = lane_list[1]
+                case "2":
+                    lane = lane_list[2]
+                case "3":
+                    lane = lane_list[3]
+                case "4":
+                    lane = lane_list[4]
+                case _:
+                    print(f"\n\033[0;31;40mOpção inválida!{d}")
+                    return
             print("\nVenceu a partida? ")
             win = input("\nSim [1] | Não [0] ")
             win = True if win == "1" else False
@@ -92,7 +101,19 @@ def champ_delete():
             delete_champ(choice)
             print(f"\n\033[1;33;40mCampeão deletado com sucesso!{d}")
         else:
+            print(f"\n\033[0;31;40mOpção inválida!{d}")
             return
+#!SECTION
+
+#SECTION - Seleção para separar o ranking dos campeões
+def champ_ranking():
+    champs, columns = get_all_champ()
+    df = pd.DataFrame(champs, columns=columns)
+    df = df.drop(["lane", "picks"], axis=1)
+    df = df.sort_values(by=["win", "win_rate"], ascending=False)
+
+    print(f"\n{df.to_string(index=False)}")
+
 #!SECTION
 
 if __name__ == "__main__":

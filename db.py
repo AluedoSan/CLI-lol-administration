@@ -23,6 +23,15 @@ def get_champ(name):
     return result
 #!SECTION
 
+#SECTION - Função para buscar todos os campeões
+def get_all_champ():
+    conn = sqlite3.connect("LolBase.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM lol")
+    result = cursor.fetchall()
+    columns = [description[0] for description in cursor.description]
+    conn.close()
+    return result, columns
 
 #SECTION - Função para atualizar picks, win e win_rate do campeão
 def update_info(name, result_game):
@@ -65,12 +74,7 @@ def create_champ(name, lane, victory):
 
 #SECTION - Mostra as estatísticas dos campeões
 def show_estastic():
-    conn = sqlite3.connect("LolBase.db")
-    cursor = conn.cursor()
-    cursor.execute("""
-                   SELECT * FROM lol
-                   """)
-    result = cursor.fetchall()
+    result, _ = get_all_champ()
     if not result:
         print(f"\n\033[0;31;40mNenhum registro encontrado!{d}")
     else:
@@ -78,12 +82,10 @@ def show_estastic():
             print(
                 f"""\033[1;38;47m
 {results[1]} ({results[0]}){d}
--> Com \033[1;36;40m{results[2]}{d} picks e \033[1;36;40m{results[3]}{d} vitória(s)
+-> Com \033[1;36;40m{results[2]}{d} pick(s) e \033[1;36;40m{results[3]}{d} vitória(s)
 -> Win rate de {results[4]:.2f}%{d}
             """
             )
-
-    conn.close()
 #!SECTION
 
 #SECTION - Query para a remoção de algum campeão
