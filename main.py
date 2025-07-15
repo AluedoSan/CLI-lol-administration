@@ -152,7 +152,7 @@ def champ_ranking():
     df = pd.DataFrame(champs, columns=columns)
     df = df.drop(["lane", "picks"], axis=1)
     df = df.sort_values(by=["win", "win_rate"], ascending=False)
-
+    pd.set_option("display.float_format", "{:.2f}".format)
     print(f"\n{df.to_string(index=False)}")
 
 #!SECTION
