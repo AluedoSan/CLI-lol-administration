@@ -1,6 +1,7 @@
 from db import init_db, update_info, get_champ, create_champ, show_estastic, delete_champ
 
 d = "\033[m"
+lane_list = ["top", "jg", "mid", "adc", "sup"]
 
 #SECTION - Main para rodar as funções
 def main():
@@ -50,7 +51,27 @@ def champ_select():
         confirm = True if confirm == "1" else False
     
         if confirm:
-            lane = str(input("\nQual a lane? "))
+            print(f"""\033[1;35;40m
+Qual a lane? Escolha uma das opções!
+[0] - top
+[1] - jg
+[2] - mid
+[3] - adc
+[4] - sup{d}""")
+            option = input("Opção: ")
+            if option == "0":
+                lane = lane_list[0]
+            elif option == "1":
+                lane = lane_list[1]
+            elif option == "2":
+                lane = lane_list[2]
+            elif option == "3":
+                lane = lane_list[3]
+            elif option == "4":
+                lane = lane_list[4]
+            else:
+                print(f"\n\033[0;31;40mOpção inválida!{d}")
+                return
             print("\nVenceu a partida? ")
             win = input("\nSim [1] | Não [0] ")
             win = True if win == "1" else False
