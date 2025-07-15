@@ -72,22 +72,6 @@ def create_champ(name, lane, victory):
     conn.close()
 #!SECTION    
 
-#SECTION - Mostra as estatísticas dos campeões
-def show_estastic():
-    result, _ = get_all_champ()
-    if not result:
-        print(f"\n\033[0;31;40mNenhum registro encontrado!{d}")
-    else:
-        for results in result:
-            print(
-                f"""\033[1;38;47m
-{results[1]} ({results[0]}){d}
--> Com \033[1;36;40m{results[2]}{d} pick(s) e \033[1;36;40m{results[3]}{d} vitória(s)
--> Win rate de {results[4]:.2f}%{d}
-            """
-            )
-#!SECTION
-
 #SECTION - Query para a remoção de algum campeão
 def delete_champ(name):
     conn = sqlite3.connect("LolBase.db")

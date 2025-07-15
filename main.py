@@ -1,4 +1,4 @@
-from db import init_db, update_info, get_champ, create_champ, show_estastic, delete_champ, get_all_champ
+from db import init_db, update_info, get_champ, create_champ, delete_champ, get_all_champ
 import pandas as pd
 
 d = "\033[m"
@@ -8,7 +8,7 @@ lane_list = ["top", "jg", "mid", "adc", "sup"]
 def main():
     init_db()
     print(f"\033[0;30;41mBanco de dados inicializado.{d}")
-    print(f"\033[1;33;45m⭐ Bem-Vindo a Summoner's Rift ⭐ {d}")
+    print(f"\033[1;33;45m⭐ Bem-Vindo a Summoner's Rift ⭐{d}")
     options_menu()
 #!SECTION
 
@@ -86,6 +86,47 @@ Qual a lane? Escolha uma das opções!
             win = True if win == "1" else False
             create_champ(choice, lane, win)
             print(f"\n\033[1;32;40mCampeão adicionado com sucesso!{d}")
+#!SECTION
+
+#SECTION - Mostra as estatísticas dos campeões
+def show_estastic():
+    result, _ = get_all_champ()
+    preferred_lane = {
+        "top": 0,
+        "jg" : 0,
+        "mid": 0,
+        "adc": 0,
+        "sup": 0
+    }
+    if not result:
+        print(f"\n\033[0;31;40mNenhum registro encontrado!{d}")
+    else:
+        print(f"\n\033[1;34;41m<-Campeões->{d}")
+        for results in result:
+            # Match para contar a lane mais jogada
+            match results[0]:
+                case "top":
+                    preferred_lane["top"] += 1
+                case "jg":
+                    preferred_lane["jg"] += 1
+                case "mid":
+                    preferred_lane["mid"] += 1
+                case "adc":
+                    preferred_lane["adc"] += 1
+                case "sup":
+                    preferred_lane["sup"] += 1
+            # Print para as estastísticas básicas
+            print(
+                f"""\033[1;38;47m
+{results[1]} ({results[0]}){d}
+-> Com \033[1;36;40m{results[2]}{d} pick(s) e \033[1;36;40m{results[3]}{d} vitória(s)
+-> Win rate de {results[4]:.2f}%{d}
+            """
+            )
+        # Mostrar o tanto que foi jogado em cada lane
+        print(f"\n\033[1;34;41m<-Lanes->{d}")
+        df = pd.DataFrame([preferred_lane])
+        print(df.T.reset_index().to_string(index=False, header=False))
 #!SECTION
 
 #SECTION - Seleção para fazer o DELETE de um campeão
